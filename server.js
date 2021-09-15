@@ -21,9 +21,9 @@ const db = mysql.createConnection(
 );
 
 
-// db.query('SELECT * FROM students', function (err, results) {
-//   console.log(results);
-// });
+db.query('SELECT * FROM employee_db', function (err, results) {
+  console.log(results);
+});
 
 
 app.use((req, res) => {
