@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cTable = require("console.table");
+const inquirer = require("inquirer");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -21,10 +22,42 @@ const db = mysql.createConnection(
   console.log(`Connected to the employee_db database.`)
 );
 
+function mainMenu() {
+  inquirer.prompt([
+    {
+      type: "list",
+      name: "opener",
+      message: "What would you like to do?",
+      choices: ["View all Departments", "Exit"],
+    },
+  ])
+  .then((openerAnswer) => {
+    // console.log(openerAnswer);
+    if (openerAnswer.opener === "View all Departments") {
 
-db.query('SELECT * FROM employee_db.department', function (err, results) {
-  console.log(results);
+      db.query('SELECT * FROM employee_db.department', function (err, results) {
+  console.table(results);
+  
 });
+    
+    }
+    else {
+      console.log("Goodbye");
+    }
+    
+  });
+  
+
+
+}
+mainMenu();
+
+
+
+
+
+
+
 
 
 app.use((req, res) => {
