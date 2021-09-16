@@ -2,8 +2,8 @@ const express = require('express');
 const mysql = require('mysql2');
 const cTable = require("console.table");
 const inquirer = require("inquirer");
-const department = require("./lib/department");
-
+const Department = require("./lib/department");
+const newDepartment = [];
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -72,13 +72,17 @@ function mainMenu() {
             message: "What department would you like to add?",
           }
         ])
-        .then((departmentAnswer) => {
-          console.log(departmentAnswer.department);
+        .then((data) => {
+          console.log(data);
 
           const departmentOne = new Department(
-            departmentAnswer.name,
+            
+            data.departmentName
           );
-          console.log(departmentOne);
+            newDepartment.push(departmentOne);
+            console.log(newDepartment);
+          
+          
         });  
         
       }
