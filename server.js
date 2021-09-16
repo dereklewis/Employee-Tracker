@@ -28,7 +28,7 @@ function mainMenu() {
       type: "list",
       name: "opener",
       message: "What would you like to do?",
-      choices: ["View all Departments", "Exit"],
+      choices: ["View all Departments", "View all Roles", "Exit"],
     },
   ])
   .then((openerAnswer) => {
@@ -38,8 +38,19 @@ function mainMenu() {
       db.query('SELECT * FROM employee_db.department', function (err, results) {
   console.table(results);
   
+  mainMenu();
 });
     
+    }
+    else if (openerAnswer.opener === "View all Roles") {
+
+      db.query('SELECT * FROM employee_db.employee_role', function (err, results) {
+        console.table(results);
+
+        mainMenu();
+      });
+
+      
     }
     else {
       console.log("Goodbye");
