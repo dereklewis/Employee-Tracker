@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql2');
 const cTable = require("console.table");
 const inquirer = require("inquirer");
+const department = require("./lib/department");
+
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -28,7 +30,7 @@ function mainMenu() {
       type: "list",
       name: "opener",
       message: "What would you like to do?",
-      choices: ["View all Departments", "View all Roles", "View all Employees", "Exit"],
+      choices: ["View all Departments", "View all Roles", "View all Employees", "Add a Department", "Exit"],
     },
   ])
   .then((openerAnswer) => {
@@ -58,6 +60,29 @@ function mainMenu() {
         mainMenu();
       });
     }
+      
+
+      else if (openerAnswer.opener === "Add a Department") {
+
+
+        inquirer.prompt([
+          {
+            type: "string",
+            name: "department",
+            message: "What department would you like to add?",
+          }
+        ])
+        .then((departmentAnswer) => {
+          console.log(departmentAnswer.department);
+
+          const departmentOne = new Department(
+            departmentAnswer.name,
+          );
+          console.log(departmentOne);
+        });  
+        
+      }
+      
     else {
       console.log("Goodbye");
     }
