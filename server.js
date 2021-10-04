@@ -4,7 +4,6 @@ const inquirer = require("inquirer");
 const Department = require("./lib/department");
 const newDepartment = [];
 
-
 const db = mysql.createConnection(
   {
     host: "localhost",
@@ -15,8 +14,6 @@ const db = mysql.createConnection(
   },
   console.log(`Connected to the employee_db database.`)
 );
-
-
 
 function mainMenu() {
   inquirer
@@ -31,6 +28,7 @@ function mainMenu() {
           "View all Employees",
           "Add a Department",
           "Add a Role",
+          "Add an Employee",
           "Exit",
         ],
       },
@@ -72,42 +70,92 @@ function mainMenu() {
           ])
           .then((data) => {
             db.query(
-              "INSERT INTO department (department_name) VALUES (?)", data.department,
+              "INSERT INTO department (department_name) VALUES (?)",
+              data.department,
               function (err, results) {
-                
-
                 mainMenu();
               }
             );
           });
-
-      } 
-      else if (openerAnswer.opener === "Add a Role") {
-          db.query(
+      } else if (openerAnswer.opener === "Add a Role") {
+        db.query(
           "SELECT * FROM employee_db.department",
           function (err, results) {
-            
-            const resultChoices = results.map(function(item) {
-                return {name: item.department_name, value: item.id}
-            }  ) 
-            inquirer.prompt([
-              {
-                type: "list",
-                name: "department",
-                message: "What department would you like to add a role to?",
-                choices: resultChoices,
-              }
-            ])
-
-
+            const resultChoices = results.map(function (item) {
+              return { name: item.department_name, value: item.department_id };
+            });
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  name: "department",
+                  message: "What department would you like to add a role to?",
+                  choices: resultChoices,
+                },
+                {
+                  type: "string",
+                  name: "title",
+                  message: "What is their title?",
+                },
+                {
+                  type: "decimal",
+                  name: "salary",
+                  message: "What is their salary?",
+                },
+              ])
+              .then((data) => {
+                db.query(
+                  "INSERT INTO employee_role (department_id, title, salary) VALUES (?)",
+                  data.employee_role,
+                  function (err, results) {
+                    mainMenu();
+                  }
+                );
+              });
 
             // mainMenu();
           }
         );
+      } else if (openerAnswer.opener === "Add an Employee") {
+        db.query(
+          "SELECT * FROM employee_db.employee_role",
+          function (err, results) {
+            const roleChoices = results.map(function (item) {
+              return { name: item.title, value: item.role_id };
+            });
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  name: "role",
+                  message: "What will their role be?",
+                  choices: roleChoices,
+                },
+                {
+                  type: "string",
+                  name: "firstName",
+                  message: "What is their first name?",
+                },
+                {
+                  type: "string",
+                  name: "lastName",
+                  message: "What is their last name?",
+                },
+              ])
+              .then((data) => {
+                db.query(
+                  "INSERT INTO employee (role_id, first_name, last_name) VALUES (?)",
+                  data.employee_role,
+                  function (err, results) {
+                    mainMenu();
+                  }
+                );
+              });
 
-
-      }
-      else {
+            // mainMenu();
+          }
+        );
+      } else {
         console.log("Goodbye");
       }
     });
